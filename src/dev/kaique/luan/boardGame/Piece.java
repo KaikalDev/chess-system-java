@@ -1,6 +1,6 @@
 package dev.kaique.luan.boardGame;
 
-public class Piece {
+public abstract class Piece {
     protected Position position;
     private Board board;
 
@@ -14,5 +14,23 @@ public class Piece {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public abstract boolean[][] possibleMoves();
+
+    public boolean possibleMoves(Position position) {
+        return possibleMoves()[position.getRow()][position.getColumn()];
+    }
+
+    public boolean isThereAnyPossibleMove() {
+        boolean[][] mat  = possibleMoves();
+        for (boolean[] booleans : mat) {
+            for (int j = 0; j < mat.length; j++) {
+                if (booleans[j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

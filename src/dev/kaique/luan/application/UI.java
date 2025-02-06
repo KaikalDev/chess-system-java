@@ -1,8 +1,9 @@
 package dev.kaique.luan.application;
 
+import dev.kaique.luan.boardGame.Position;
 import dev.kaique.luan.chess.ChessPiece;
 import dev.kaique.luan.chess.ChessPosition;
-import dev.kaique.luan.chess.Color;
+import dev.kaique.luan.chess.Enums.Color;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -24,6 +25,11 @@ public class UI {
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
     public static ChessPosition readChessPosition(Scanner scanner) {
         try {
             String s = scanner.nextLine();
@@ -42,7 +48,7 @@ public class UI {
             for (int j = 0; j < pieces.length; j++) {
                 String backgroundColor = (i + j) % 2 == 0 ? ANSI_WHITE_BACKGROUND : ANSI_GRAY_BACKGROUND;
                 System.out.print(backgroundColor);
-                printPiece(pieces[i][j]);
+                printPiece(pieces[i][j], false, null);
                 System.out.print(ANSI_RESET);
             }
             System.out.println();
@@ -50,9 +56,30 @@ public class UI {
         System.out.println("   aㅤ bㅤ cㅤ dㅤ eㅤ fㅤ gㅤ h");
     }
 
-    private static void printPiece(ChessPiece piece) {
+    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves, ChessPosition source) {
+        for (int i = 0; i < pieces.length; i++) {
+            System.out.print((8 - i) + " ");
+            for (int j = 0; j < pieces.length; j++) {
+                String backgroundColor = (i + j) % 2 == 0 ? ANSI_WHITE_BACKGROUND : ANSI_GRAY_BACKGROUND;
+                System.out.print(backgroundColor);
+                printPiece(pieces[i][j], possibleMoves[i][j], source);
+                System.out.print(ANSI_RESET);
+            }
+            System.out.println();
+        }
+        System.out.println("   aㅤ bㅤ cㅤ dㅤ eㅤ fㅤ gㅤ h");
+    }
+
+    private static void printPiece(ChessPiece piece, boolean moves, ChessPosition source) {
+        if (moves) {
+            if (source != null && piece != null && piece.isThereOpponentPiece(source.toPosition())) {
+                System.out.print(ANSI_RED_BACKGROUND);
+            } else {
+                System.out.print(ANSI_BLUE_BACKGROUND);
+            }
+        }
         if (piece == null) {
-            System.out.print(" ㅤ ");
+            System.out.print(" ㅤ " + ANSI_RESET);
         } else {
             if (piece.getColor() == Color.BLACK) {
                 System.out.print(ANSI_BLACK + " " + piece + " " + ANSI_RESET);

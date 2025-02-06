@@ -4,6 +4,7 @@ import dev.kaique.luan.Exceptions.ChessException;
 import dev.kaique.luan.boardGame.Board;
 import dev.kaique.luan.boardGame.Piece;
 import dev.kaique.luan.boardGame.Position;
+import dev.kaique.luan.chess.Enums.Color;
 import dev.kaique.luan.chess.Piesces.King;
 import dev.kaique.luan.chess.Piesces.Rook;
 
@@ -26,12 +27,25 @@ public class ChessMatch {
         return mat;
     }
 
+    public boolean[][] possibleMoves(ChessPosition sourcePosition) {
+        Position position = sourcePosition.toPosition();
+        validateSourcePosition(position);
+        return board.getPiece(position).possibleMoves();
+    }
+
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
         Position source = sourcePosition.toPosition();
         Position target = targetPosition.toPosition();
         validateSourcePosition(source);
+        validatetargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
         return (ChessPiece) capturedPiece;
+    }
+
+    private void validatetargetPosition(Position source, Position target) {
+        if(!board.getPiece(source).possibleMoves(target)) {
+            throw new ChessException("The chosen piece can't move to target position");
+        }
     }
 
     private Piece makeMove(Position source, Position target) {
@@ -44,6 +58,9 @@ public class ChessMatch {
     private void validateSourcePosition(Position position) {
         if(!board.thereIsAPiece(position)) {
             throw new ChessException("There is no piece on source position");
+        }
+        if (!board.getPiece(position).isThereAnyPossibleMove()) {
+            throw new ChessException("There is no possible moves for the chosen piece");
         }
     }
 
