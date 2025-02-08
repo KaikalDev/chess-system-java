@@ -1,12 +1,18 @@
 package dev.kaique.luan.application;
 
 import dev.kaique.luan.boardGame.Position;
+import dev.kaique.luan.chess.Check.Check;
+import dev.kaique.luan.chess.ChessMatch;
 import dev.kaique.luan.chess.ChessPiece;
 import dev.kaique.luan.chess.ChessPosition;
 import dev.kaique.luan.chess.Enums.Color;
+import dev.kaique.luan.chess.Piesces.King;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class UI {
 
@@ -41,14 +47,22 @@ public class UI {
         }
     }
 
+    public static void printMatch(ChessMatch chessMatch, List<ChessPiece> capturedPieces) {
+        printBoard(chessMatch.getPieces(), chessMatch.getCheck());
+        System.out.println();
+        printCapturedpiece(capturedPieces);
+        System.out.println();
+        System.out.println("Turn: " + chessMatch.getTurn());
+        System.out.println("Waiting player: " + chessMatch.getcurrentPlayer());
+    }
 
-    public static void printBoard(ChessPiece[][] pieces) {
+    public static void printBoard(ChessPiece[][] pieces, Check check) {
         for (int i = 0; i < pieces.length; i++) {
             System.out.print((8 - i) + " ");
             for (int j = 0; j < pieces.length; j++) {
                 String backgroundColor = (i + j) % 2 == 0 ? ANSI_WHITE_BACKGROUND : ANSI_GRAY_BACKGROUND;
                 System.out.print(backgroundColor);
-                printPiece(pieces[i][j], false, null);
+                printPiece(pieces[i][j], false, null, check);
                 System.out.print(ANSI_RESET);
             }
             System.out.println();
@@ -56,13 +70,13 @@ public class UI {
         System.out.println("   aㅤ bㅤ cㅤ dㅤ eㅤ fㅤ gㅤ h");
     }
 
-    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves, ChessPosition source) {
+    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves, ChessPosition source, Check check) {
         for (int i = 0; i < pieces.length; i++) {
             System.out.print((8 - i) + " ");
             for (int j = 0; j < pieces.length; j++) {
                 String backgroundColor = (i + j) % 2 == 0 ? ANSI_WHITE_BACKGROUND : ANSI_GRAY_BACKGROUND;
                 System.out.print(backgroundColor);
-                printPiece(pieces[i][j], possibleMoves[i][j], source);
+                printPiece(pieces[i][j], possibleMoves[i][j], source, check);
                 System.out.print(ANSI_RESET);
             }
             System.out.println();
@@ -70,7 +84,7 @@ public class UI {
         System.out.println("   aㅤ bㅤ cㅤ dㅤ eㅤ fㅤ gㅤ h");
     }
 
-    private static void printPiece(ChessPiece piece, boolean moves, ChessPosition source) {
+    private static void printPiece(ChessPiece piece, boolean moves, ChessPosition source, Check check) {
         if (moves) {
             if (source != null && piece != null && piece.isThereOpponentPiece(source.toPosition())) {
                 System.out.print(ANSI_RED_BACKGROUND);
@@ -78,6 +92,20 @@ public class UI {
                 System.out.print(ANSI_BLUE_BACKGROUND);
             }
         }
+        if (check != null && piece instanceof King) {
+            assert source != null;
+            if (check.getPlayer() == piece.getColor() && check.getCheck()) {
+                System.out.print(ANSI_RED_BACKGROUND);
+            }
+        }
+
+
+        if (source != null && piece != null) {
+            if(source.equals(piece.getChessPosition())) {
+                System.out.print(ANSI_YELLOW_BACKGROUND);
+            }
+        }
+
         if (piece == null) {
             System.out.print(" ㅤ " + ANSI_RESET);
         } else {
@@ -87,5 +115,15 @@ public class UI {
                 System.out.print(" " + piece + " ");
             }
         }
+    }
+
+    private static void printCapturedpiece(List<ChessPiece> capturaed) {
+        System.out.println("Captured pieces: ");
+        System.out.print(ANSI_GRAY_BACKGROUND + ANSI_GRAY_BACKGROUND);
+        System.out.print("White: ");
+        System.out.println(Arrays.toString(capturaed.stream().filter(p -> p.getColor() == Color.WHITE).toArray()) + ANSI_RESET);
+        System.out.print(ANSI_BLACK + ANSI_WHITE_BACKGROUND);
+        System.out.print("Black: ");
+        System.out.println(Arrays.toString(capturaed.stream().filter(p -> p.getColor() == Color.BLACK).toArray()) + ANSI_RESET);
     }
 }

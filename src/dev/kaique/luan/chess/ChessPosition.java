@@ -28,12 +28,21 @@ public class ChessPosition {
         return new Position(8 - row, col - 'a');
     }
 
-    protected ChessPosition fromPosition(Position position) {
-        return new ChessPosition((char) ('a' - position.getColumn()), 8 - position.getRow());
+    protected static ChessPosition fromPosition(Position position) {
+        return new ChessPosition((char) ('a' + position.getColumn()), 8 - position.getRow());
     }
 
     @Override
     public String toString() {
         return "" + col + row;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ChessPosition other = (ChessPosition) obj;
+        return this.col == other.col && this.row == other.row;
     }
 }

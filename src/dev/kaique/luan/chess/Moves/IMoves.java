@@ -2,9 +2,13 @@ package dev.kaique.luan.chess.Moves;
 
 import dev.kaique.luan.boardGame.Board;
 import dev.kaique.luan.boardGame.Position;
+import dev.kaique.luan.chess.ChessMatch;
 import dev.kaique.luan.chess.ChessPiece;
+import dev.kaique.luan.chess.Enums.Color;
 
 public interface IMoves {
+
+    boolean[][] testMovesCheck(boolean[][] mat, Board board, Position position, ChessMatch match, Color color);
 
     boolean[][] AllVertical(boolean[][] mat, Board board, Position position, ChessPiece piece, int Direction);
     boolean[][] AllHorizontal(boolean[][] mat, Board board, Position position, ChessPiece piece, int Direction);

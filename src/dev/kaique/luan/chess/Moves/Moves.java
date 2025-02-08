@@ -2,13 +2,31 @@ package dev.kaique.luan.chess.Moves;
 
 import dev.kaique.luan.boardGame.Board;
 import dev.kaique.luan.boardGame.Position;
+import dev.kaique.luan.chess.Check.Check;
+import dev.kaique.luan.chess.ChessMatch;
 import dev.kaique.luan.chess.ChessPiece;
+import dev.kaique.luan.chess.Enums.Color;
 
 public class Moves implements IMoves{
 
     private boolean canMove(Position position, Board board, ChessPiece piece) {
         ChessPiece p = (ChessPiece) board.getPiece(position);
         return p == null || p.getColor() != piece.getColor();
+    }
+
+    @Override
+    public boolean[][] testMovesCheck(boolean[][] mat, Board board, Position position, ChessMatch match, Color color) {
+        for(int i = 0; i < board.getRows(); i++) {
+            for(int j = 0; j < board.getCols(); j++) {
+                if(mat[i][j]) {
+                    Check test = match.performChessMoveMock(position, new Position(i,j));
+                    if(test.getCheck() && test.getPlayer() == color) {
+                        mat[i][j] = false;
+                    }
+                }
+            }
+        }
+        return mat;
     }
 
     @Override
