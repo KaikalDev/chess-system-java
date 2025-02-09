@@ -53,7 +53,15 @@ public class UI {
         printCapturedpiece(capturedPieces);
         System.out.println();
         System.out.println("Turn: " + chessMatch.getTurn());
-        System.out.println("Waiting player: " + chessMatch.getcurrentPlayer());
+        if (!chessMatch.getCheck().isCheckMate()) {
+            System.out.println("Waiting player: " + chessMatch.getcurrentPlayer());
+            if(chessMatch.getCheck().getCheck()) {
+                System.out.println("Check !");
+            }
+        } else {
+            System.out.println("Check Mate !");
+            System.out.println("Winner: " + chessMatch.getcurrentPlayer());
+        }
     }
 
     public static void printBoard(ChessPiece[][] pieces, Check check) {
@@ -96,6 +104,8 @@ public class UI {
             assert source != null;
             if (check.getPlayer() == piece.getColor() && check.getCheck()) {
                 System.out.print(ANSI_RED_BACKGROUND);
+            } else if (check.getPlayer() != piece.getColor() && check.isCheckMate()) {
+                System.out.print(ANSI_YELLOW_BACKGROUND);
             }
         }
 

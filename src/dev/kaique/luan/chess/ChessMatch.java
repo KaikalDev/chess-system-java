@@ -84,6 +84,33 @@ public class ChessMatch {
         return false;
     }
 
+    private boolean testCheckMate(Color color) {
+        if(!testCheck(color)) {
+            return false;
+        }
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(
+                p -> ((ChessPiece)p).getColor() == color).collect(Collectors.toList()
+        );
+        for (Piece p : opponentPieces) {
+            boolean[][] mat = p.possibleMoves();
+            for (int i = 0; i < board.getRows(); i++) {
+                for (int j = 0; j < board.getCols(); j++) {
+                    if(mat[i][j]) {
+                        Position source = ((ChessPiece) p).getChessPosition().toPosition();
+                        Position target = new Position(i,j);
+                        Piece captured = makeMove(source, target);
+                        boolean testCheck = testCheck(color);
+                        undoMove(source, target, captured);
+                        if(!testCheck) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public ChessPiece[][] getPieces() {
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getCols()];
         for (int i = 0; i < board.getRows(); i++) {
@@ -118,7 +145,12 @@ public class ChessMatch {
             check.updateCheck(false, null);
         }
 
-        nextTurn();
+        if (testCheckMate(opponent(currentPlayer))) {
+            check.setCheckMate(true);
+        } else {
+            nextTurn();
+        }
+
 
         return (ChessPiece) capturedPiece;
     }
@@ -183,6 +215,13 @@ public class ChessMatch {
     }
 
     private void initialSetup() {
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
+        placeNewPiece('h', 7, new Rook(board, Color.WHITE, this));
+        placeNewPiece('g', 6, new Rook(board, Color.WHITE, this));
+
+        placeNewPiece('a', 8, new King(board, Color.BLACK, this));
+        /**
+         * Tabuleiro Montado
         placeNewPiece('a', 1, new Rook(board, Color.WHITE, this));
         placeNewPiece('b', 1, new Rook(board, Color.WHITE, this));
         placeNewPiece('c', 1, new Rook(board, Color.WHITE, this));
@@ -216,5 +255,6 @@ public class ChessMatch {
         placeNewPiece('f', 7, new Rook(board, Color.BLACK, this));
         placeNewPiece('g', 7, new Rook(board, Color.BLACK, this));
         placeNewPiece('h', 7, new Rook(board, Color.BLACK, this));
+         */
     }
 }
