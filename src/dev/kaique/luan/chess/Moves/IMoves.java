@@ -23,4 +23,5 @@ public interface IMoves {
     boolean[][] OneDiagonalL(boolean[][] mat, Board board, Position position, ChessPiece piece, int Direction);
 
     boolean[][] KNIGHT(boolean[][] mat, Board board, Position position, ChessPiece piece);
+    boolean[][] PAWN(boolean[][] mat, Board board, Position position, ChessPiece piece, int Direction);
 }

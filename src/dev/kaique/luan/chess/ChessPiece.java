@@ -9,6 +9,7 @@ public abstract class ChessPiece extends Piece {
 
     private final Color color;
     private final ChessMatch match;
+    private int moveCount;
 
     public ChessPiece(Board board, Color color, ChessMatch match) {
         super(board);
@@ -22,6 +23,18 @@ public abstract class ChessPiece extends Piece {
 
     public ChessMatch getMatch() {
         return match;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public void increaseMoveCount() {
+        moveCount++;
+    }
+
+    public void decreaseMoveCount() {
+        moveCount--;
     }
 
     public ChessPosition getChessPosition() {
